@@ -278,14 +278,7 @@
   <h1>GALLERY WALLPAPER BOCIL AWOKAWOK</h1>
   <input class="name-input" id="nameInput" value="LUCUK" maxlength="20">
   <p class="subtitle">Ini adalah foto imupku, ya gitulah pokonya, kamu bisa nulis apapun diatas ya</p>
-
-  <div class="photo-stage">
-    <!-- FOTO HIGHLIGHT (besar, di tengah) -->
-  <div class="photo-highlight">
-    <img src="asset/dhesy.jpg" alt="foto highlight">
-  </div>
-
-  <!-- FOTO-FOTO RANDOM DI SEKITARNYA -->
+<!-- FOTO-FOTO RANDOM DI SEKITARNYA -->
   <div class="photo-scatter">
     <div class="photo-slot s1"><img src="asset/bahlil.jpg" alt=""></div>
     <div class="photo-slot s2"><img src="asset/ghuf.jpg" alt=""></div>
@@ -294,6 +287,13 @@
     <div class="photo-slot s5"><img src="asset/prabo.jpg" alt=""></div>
   </div>
   </div> 
+  <div class="photo-stage">
+    <!-- FOTO HIGHLIGHT (besar, di tengah) -->
+  <div class="photo-highlight">
+    <img src="asset/dhesy.jpg" alt="foto highlight">
+  </div>
+
+  
 
   <div class="sticker-wall" id="stickerWall">
     <div class="sticker">
@@ -425,48 +425,20 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: fallback aman untuk browser yang blok autoplay ===== */
+  /* ===== musik: autoplay muted, unmute di gerakan pertama ===== */
   var bgMusic = new Audio('asset/mbg.mp3');
   bgMusic.loop = true;
-  bgMusic.preload = 'auto';
   bgMusic.muted = true;
+  bgMusic.play(); // ini diizinkan browser karena muted
 
-  var musicStarted = false;
   var unmuted = false;
-
-  function tryStartMuted(){
-    if(musicStarted) return;
-    var startMuted = bgMusic.play();
-    if(startMuted && typeof startMuted.then === 'function'){
-      startMuted.then(function(){
-        musicStarted = true;
-      }).catch(function(){
-        // Browser bisa menolak autoplay, akan dicoba lagi saat ada interaksi user.
-      });
-    } else {
-      musicStarted = true;
-    }
-  }
-
-  function unlockAndUnmute(){
+  function unmuteMusic(){
     if(unmuted) return;
     bgMusic.muted = false;
-    var startWithGesture = bgMusic.play();
-    if(startWithGesture && typeof startWithGesture.then === 'function'){
-      startWithGesture.then(function(){
-        musicStarted = true;
-      }).catch(function(){
-        // Tetap lanjut; browser bisa perlu gesture berikutnya.
-      });
-    } else {
-      musicStarted = true;
-    }
     unmuted = true;
   }
-
-  tryStartMuted();
-  ['click','touchstart','keydown','pointerdown','mousemove','scroll'].forEach(function(evt){
-    document.addEventListener(evt, unlockAndUnmute, { once:true });
+  ['mousemove','click','touchstart','keydown','scroll','pointerdown'].forEach(function(evt){
+    document.addEventListener(evt, unmuteMusic, { once:true, passive:true });
   });
 
   /* ===== tombol musik: keliatan kayak stop, tapi sebenernya nggak stop ===== */
