@@ -427,34 +427,22 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: tombol beneran play/pause + fallback source GH Pages ===== */
-  var bgMusic = new Audio();
+  /* ===== musik: play/pause + diagnosa error ===== */
+  var bgMusic = new Audio('asset/mbg.mp3');
   bgMusic.loop = true;
   bgMusic.preload = 'auto';
-  bgMusic.volume = 1;
-
-  var audioSources = [
-    'asset/mbg.mp3',
-    './asset/mbg.mp3',
-    '/wallpaperawokawok/asset/mbg.mp3'
-  ];
-  var sourceIndex = 0;
-
-  function setAudioSource(index){
-    sourceIndex = index;
-    bgMusic.src = audioSources[sourceIndex];
-    bgMusic.load();
-  }
 
   bgMusic.addEventListener('error', function(){
-    if(sourceIndex < audioSources.length - 1){
-      setAudioSource(sourceIndex + 1);
-      return;
-    }
-    showPopup('File musik tidak ketemu di GitHub Pages 😵', 0, 0, true);
+    var code = bgMusic.error ? bgMusic.error.code : 'unknown';
+    var reason = {
+      1: 'proses dibatalkan',
+      2: 'jaringan gagal ambil file',
+      3: 'format audio rusak/tidak didukung',
+      4: 'file tidak ketemu di path itu (404) atau format tidak didukung'
+    }[code] || 'error tidak diketahui';
+    showPopup('Musik gagal: ' + reason + ' (cek asset/mbg.mp3)', 0, 0, true);
+    console.error('Audio error code:', code, bgMusic.error);
   });
-
-  setAudioSource(0);
 
   var musicBtn = document.getElementById('musicBtn');
   var isPlaying = false;
@@ -463,25 +451,16 @@
     musicBtn.textContent = isPlaying ? "⏸️ Pause Lagu Ngeselin" : "🔊 Puter Lagu Ngeselin";
   }
 
-  function tryPlayMusic(fromButton){
-    bgMusic.muted = false;
+  function tryPlayMusic(){
     var playPromise = bgMusic.play();
     if(playPromise && typeof playPromise.then === 'function'){
       playPromise.then(function(){
         isPlaying = true;
         updateMusicButton();
       }).catch(function(err){
-        if(fromButton){
-          if(err && err.name === 'NotAllowedError'){
-            showPopup("Browser nahan autoplay. Klik sekali lagi 🔊", 0, 0, true);
-          } else {
-            showPopup("Audio gagal diputar. Cek source lagu 😵", 0, 0, true);
-          }
-        }
+        showPopup("Klik sekali lagi tombol musiknya ya 🔊", 0, 0, true);
+        console.error('Play blocked:', err);
       });
-    } else {
-      isPlaying = true;
-      updateMusicButton();
     }
   }
 
@@ -494,19 +473,7 @@
   updateMusicButton();
 
   musicBtn.addEventListener('click', function(){
-    if(isPlaying){
-      pauseMusic();
-      return;
-    }
-    tryPlayMusic(true);
-  });
-
-  ['click','touchstart','keydown','pointerdown'].forEach(function(evt){
-    document.addEventListener(evt, function(){
-      if(!isPlaying){
-        tryPlayMusic(false);
-      }
-    }, { once:true });
+    if(isPlaying){ pauseMusic(); } else { tryPlayMusic(); }
   });
 </script>
 
