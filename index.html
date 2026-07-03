@@ -427,54 +427,67 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: play/pause + diagnosa error ===== */
+  /* ===== musik: autoplay senyap → otomatis kedengeran di gerakan pertama ===== */
   var bgMusic = new Audio('asset/mbg.mp3');
   bgMusic.loop = true;
   bgMusic.preload = 'auto';
 
   bgMusic.addEventListener('error', function(){
     var code = bgMusic.error ? bgMusic.error.code : 'unknown';
-    var reason = {
-      1: 'proses dibatalkan',
-      2: 'jaringan gagal ambil file',
-      3: 'format audio rusak/tidak didukung',
-      4: 'file tidak ketemu di path itu (404) atau format tidak didukung'
-    }[code] || 'error tidak diketahui';
-    showPopup('Musik gagal: ' + reason + ' (cek asset/mbg.mp3)', 0, 0, true);
     console.error('Audio error code:', code, bgMusic.error);
   });
 
   var musicBtn = document.getElementById('musicBtn');
   var isPlaying = false;
+  var unmuted = false;
 
   function updateMusicButton(){
     musicBtn.textContent = isPlaying ? "⏸️ Pause Lagu Ngeselin" : "🔊 Puter Lagu Ngeselin";
   }
 
-  function tryPlayMusic(){
-    var playPromise = bgMusic.play();
-    if(playPromise && typeof playPromise.then === 'function'){
-      playPromise.then(function(){
+  // coba langsung play tanpa mute begitu halaman kebuka
+  bgMusic.play().then(function(){
+    isPlaying = true;
+    unmuted = true;
+    updateMusicButton();
+  }).catch(function(){
+    // browser block, jalan mode senyap dulu
+    bgMusic.muted = true;
+    bgMusic.play().then(function(){
+      isPlaying = true;
+      updateMusicButton();
+    });
+  });
+
+  // begitu ada gerakan/klik pertama di halaman, pastikan suara nyala
+  ['mousemove','click','touchstart','keydown','scroll','pointerdown'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      if(!unmuted){
+        bgMusic.muted = false;
+        unmuted = true;
+      }
+      if(!isPlaying){
+        bgMusic.play();
         isPlaying = true;
         updateMusicButton();
-      }).catch(function(err){
-        showPopup("Klik sekali lagi tombol musiknya ya 🔊", 0, 0, true);
-        console.error('Play blocked:', err);
-      });
-    }
-  }
-
-  function pauseMusic(){
-    bgMusic.pause();
-    isPlaying = false;
-    updateMusicButton();
-  }
-
-  updateMusicButton();
+      }
+    }, { once:true, passive:true });
+  });
 
   musicBtn.addEventListener('click', function(){
-    if(isPlaying){ pauseMusic(); } else { tryPlayMusic(); }
+    if(isPlaying && unmuted){
+      bgMusic.pause();
+      isPlaying = false;
+    } else {
+      bgMusic.muted = false;
+      unmuted = true;
+      bgMusic.play();
+      isPlaying = true;
+    }
+    updateMusicButton();
   });
+
+  updateMusicButton();
 </script>
 
 </body>
