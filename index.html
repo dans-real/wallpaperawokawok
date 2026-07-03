@@ -427,55 +427,58 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: fallback aman untuk browser yang blok autoplay ===== */
+  /* ===== musik: tombol beneran play/pause + fallback gesture ===== */
   var bgMusic = new Audio('asset/mbg.mp3');
   bgMusic.loop = true;
   bgMusic.preload = 'auto';
-  bgMusic.muted = true;
 
-  var musicStarted = false;
-  var unmuted = false;
+  var musicBtn = document.getElementById('musicBtn');
+  var isPlaying = false;
 
-  function tryStartMuted(){
-    if(musicStarted) return;
-    var startMuted = bgMusic.play();
-    if(startMuted && typeof startMuted.then === 'function'){
-      startMuted.then(function(){
-        musicStarted = true;
-      }).catch(function(){
-        // Browser bisa menolak autoplay, akan dicoba lagi saat ada interaksi user.
-      });
-    } else {
-      musicStarted = true;
-    }
+  function updateMusicButton(){
+    musicBtn.textContent = isPlaying ? "⏸️ Pause Lagu Ngeselin" : "🔊 Puter Lagu Ngeselin";
   }
 
-  function unlockAndUnmute(){
-    if(unmuted) return;
+  function tryPlayMusic(fromButton){
     bgMusic.muted = false;
-    var startWithGesture = bgMusic.play();
-    if(startWithGesture && typeof startWithGesture.then === 'function'){
-      startWithGesture.then(function(){
-        musicStarted = true;
+    var playPromise = bgMusic.play();
+    if(playPromise && typeof playPromise.then === 'function'){
+      playPromise.then(function(){
+        isPlaying = true;
+        updateMusicButton();
       }).catch(function(){
-        // Tetap lanjut; browser bisa perlu gesture berikutnya.
+        if(fromButton){
+          showPopup("Audio diblok browser. Klik lagi ya 🔊", 0, 0, true);
+        }
       });
     } else {
-      musicStarted = true;
+      isPlaying = true;
+      updateMusicButton();
     }
-    unmuted = true;
   }
 
-  tryStartMuted();
-  ['click','touchstart','keydown','pointerdown','mousemove','scroll'].forEach(function(evt){
-    document.addEventListener(evt, unlockAndUnmute, { once:true });
+  function pauseMusic(){
+    bgMusic.pause();
+    isPlaying = false;
+    updateMusicButton();
+  }
+
+  updateMusicButton();
+
+  musicBtn.addEventListener('click', function(){
+    if(isPlaying){
+      pauseMusic();
+      return;
+    }
+    tryPlayMusic(true);
   });
 
-  /* ===== tombol musik: keliatan kayak stop, tapi sebenernya nggak stop ===== */
-  var musicBtn = document.getElementById('musicBtn');
-  musicBtn.textContent = "🔇 Stop Lagu Ngeselin";
-  musicBtn.addEventListener('click', function(){
-    showPopup("AWOWKWK, Ngapain dek!!! 🥳", 0, 0, true);
+  ['click','touchstart','keydown','pointerdown'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      if(!isPlaying){
+        tryPlayMusic(false);
+      }
+    }, { once:true });
   });
 </script>
 

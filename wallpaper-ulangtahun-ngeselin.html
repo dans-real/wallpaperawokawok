@@ -425,27 +425,58 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: autoplay muted, unmute di gerakan pertama ===== */
+  /* ===== musik: tombol beneran play/pause + fallback gesture ===== */
   var bgMusic = new Audio('asset/mbg.mp3');
   bgMusic.loop = true;
-  bgMusic.muted = true;
-  bgMusic.play(); // ini diizinkan browser karena muted
+  bgMusic.preload = 'auto';
 
-  var unmuted = false;
-  function unmuteMusic(){
-    if(unmuted) return;
-    bgMusic.muted = false;
-    unmuted = true;
+  var musicBtn = document.getElementById('musicBtn');
+  var isPlaying = false;
+
+  function updateMusicButton(){
+    musicBtn.textContent = isPlaying ? "⏸️ Pause Lagu Ngeselin" : "🔊 Puter Lagu Ngeselin";
   }
-  ['mousemove','click','touchstart','keydown','scroll','pointerdown'].forEach(function(evt){
-    document.addEventListener(evt, unmuteMusic, { once:true, passive:true });
+
+  function tryPlayMusic(fromButton){
+    bgMusic.muted = false;
+    var playPromise = bgMusic.play();
+    if(playPromise && typeof playPromise.then === 'function'){
+      playPromise.then(function(){
+        isPlaying = true;
+        updateMusicButton();
+      }).catch(function(){
+        if(fromButton){
+          showPopup("Audio diblok browser. Klik lagi ya 🔊", 0, 0, true);
+        }
+      });
+    } else {
+      isPlaying = true;
+      updateMusicButton();
+    }
+  }
+
+  function pauseMusic(){
+    bgMusic.pause();
+    isPlaying = false;
+    updateMusicButton();
+  }
+
+  updateMusicButton();
+
+  musicBtn.addEventListener('click', function(){
+    if(isPlaying){
+      pauseMusic();
+      return;
+    }
+    tryPlayMusic(true);
   });
 
-  /* ===== tombol musik: keliatan kayak stop, tapi sebenernya nggak stop ===== */
-  var musicBtn = document.getElementById('musicBtn');
-  musicBtn.textContent = "🔇 Stop Lagu Ngeselin";
-  musicBtn.addEventListener('click', function(){
-    showPopup("AWOWKWK, Ngapain dek!!! 🥳", 0, 0, true);
+  ['click','touchstart','keydown','pointerdown'].forEach(function(evt){
+    document.addEventListener(evt, function(){
+      if(!isPlaying){
+        tryPlayMusic(false);
+      }
+    }, { once:true });
   });
 </script>
 
