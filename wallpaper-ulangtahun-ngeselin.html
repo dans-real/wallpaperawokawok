@@ -127,7 +127,7 @@
     object-fit:cover;
     display:block;
   }
-  .photo-scatter{ position:absolute; inset:0; z-index:2; }
+  .photo-scatter{ position:absolute; inset:0; z-index:7; pointer-events:none; }
   .photo-slot{
     position:absolute;
     width:110px;
@@ -425,10 +425,34 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: tombol beneran play/pause + fallback gesture ===== */
-  var bgMusic = new Audio('asset/mbg.mp3');
+  /* ===== musik: tombol beneran play/pause + fallback source GH Pages ===== */
+  var bgMusic = new Audio();
   bgMusic.loop = true;
   bgMusic.preload = 'auto';
+  bgMusic.volume = 1;
+
+  var audioSources = [
+    'asset/mbg.mp3',
+    './asset/mbg.mp3',
+    '/wallpaperawokawok/asset/mbg.mp3'
+  ];
+  var sourceIndex = 0;
+
+  function setAudioSource(index){
+    sourceIndex = index;
+    bgMusic.src = audioSources[sourceIndex];
+    bgMusic.load();
+  }
+
+  bgMusic.addEventListener('error', function(){
+    if(sourceIndex < audioSources.length - 1){
+      setAudioSource(sourceIndex + 1);
+      return;
+    }
+    showPopup('File musik tidak ketemu di GitHub Pages 😵', 0, 0, true);
+  });
+
+  setAudioSource(0);
 
   var musicBtn = document.getElementById('musicBtn');
   var isPlaying = false;
@@ -444,9 +468,13 @@
       playPromise.then(function(){
         isPlaying = true;
         updateMusicButton();
-      }).catch(function(){
+      }).catch(function(err){
         if(fromButton){
-          showPopup("Audio diblok browser. Klik lagi ya 🔊", 0, 0, true);
+          if(err && err.name === 'NotAllowedError'){
+            showPopup("Browser nahan autoplay. Klik sekali lagi 🔊", 0, 0, true);
+          } else {
+            showPopup("Audio gagal diputar. Cek source lagu 😵", 0, 0, true);
+          }
         }
       });
     } else {
