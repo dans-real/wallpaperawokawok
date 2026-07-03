@@ -267,6 +267,23 @@
     font-size:11px;
     color:rgba(36,30,51,0.7);
   }
+  .photo-stage{
+  position:relative; /* wajib, biar z-index anak-anaknya berlaku */
+}
+.photo-highlight{
+  position:relative;
+  z-index:5; /* foto besar, di belakang */
+}
+.photo-scatter{
+  position:absolute;
+  inset:0;
+  z-index:10; /* foto-foto kecil, di depan — naikkan biar makin pasti menang */
+  pointer-events:none;
+}
+.photo-slot{
+  position:absolute;
+  /* nggak perlu z-index sendiri, udah ikut parent .photo-scatter */
+}
 </style>
 </head>
 <body>
