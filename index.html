@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SELAMAT ULANG TAHUN 🎉 (versi ngeselin)</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bubblegum:#FF5FA2;
+    --lime:#C6F24E;
+    --sky:#4FC3F7;
+    --grape:#8C5CF7;
+    --sun:#FFD23F;
+    --ink:#241E33;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; height:100%;
+    font-family:'Baloo 2', cursive;
+    overflow-x:hidden;
+    background: linear-gradient(-45deg, var(--bubblegum), var(--grape), var(--sky), var(--sun));
+    background-size: 400% 400%;
+    animation: bgshift 14s ease infinite;
+    color:var(--ink);
+    position:relative;
+  }
+  @keyframes bgshift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  #confetti{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:2;
+  }
+
+  main{
+    position:relative;
+    z-index:3;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding: 40px 16px 100px;
+    text-align:center;
+  }
+
+  .badge-top{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    letter-spacing:2px;
+    background:var(--ink);
+    color:white;
+    padding:6px 16px;
+    border-radius:20px;
+    transform:rotate(-3deg);
+    box-shadow:3px 3px 0 rgba(0,0,0,0.25);
+  }
+
+  h1{
+    font-size: clamp(34px, 8vw, 70px);
+    font-weight:800;
+    margin: 18px 0 6px;
+    color:white;
+    -webkit-text-stroke: 2px var(--ink);
+    text-shadow: 4px 4px 0 var(--ink);
+    animation: wiggle 2.2s ease-in-out infinite;
+    line-height:1.05;
+  }
+  @keyframes wiggle{
+    0%,100%{ transform: rotate(-1.5deg); }
+    50%{ transform: rotate(1.5deg); }
+  }
+
+  .name-input{
+    font-family:'Baloo 2', cursive;
+    font-size:28px;
+    font-weight:700;
+    text-align:center;
+    padding:6px 14px;
+    border-radius:10px;
+    border:3px dashed var(--ink);
+    background:rgba(255,255,255,0.85);
+    color:var(--grape);
+    width: min(90vw, 340px);
+    margin-top:4px;
+  }
+
+  .subtitle{
+    font-size:18px;
+    font-weight:500;
+    color:var(--ink);
+    background:rgba(255,255,255,0.75);
+    padding:8px 18px;
+    border-radius:14px;
+    margin-top:18px;
+    max-width:480px;
+  }
+
+  /* ===== photo stage ===== */
+  .photo-stage{
+    position:relative;
+    width:100%;
+    max-width:640px;
+    margin: 40px auto;
+    min-height:420px;
+  }
+  .photo-highlight{
+    position:relative;
+    z-index:5;
+    width:min(78vw, 320px);
+    aspect-ratio: 4/5;
+    margin:0 auto;
+    border:6px solid white;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    transform: rotate(-1.5deg);
+    background: rgba(255,255,255,0.5);
+  }
+  .photo-highlight img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .photo-scatter{ position:absolute; inset:0; z-index:2; }
+  .photo-slot{
+    position:absolute;
+    width:110px;
+    aspect-ratio:1/1;
+    border:5px solid white;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:5px 5px 0 var(--ink);
+    background: rgba(255,255,255,0.5);
+  }
+  .photo-slot img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .s1{ top:0%;   left:2%;  transform:rotate(-8deg); }
+  .s2{ top:8%;   right:0%; transform:rotate(7deg); }
+  .s3{ bottom:5%; left:0%;  transform:rotate(5deg); }
+  .s4{ bottom:0%; right:4%; transform:rotate(-6deg); }
+  .s5{ top:44%;  left:-6%; transform:rotate(3deg); width:90px; }
+  @media (max-width:480px){
+    .photo-slot{ width:80px; }
+    .s5{ display:none; }
+  }
+
+  /* ===== sticker wall ===== */
+  .sticker-wall{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+    justify-content:center;
+    margin-top:36px;
+    max-width:720px;
+  }
+  .sticker{
+    background:white;
+    border:3px solid var(--ink);
+    border-radius:16px;
+    padding:14px 16px 10px;
+    width:130px;
+    box-shadow:5px 5px 0 var(--ink);
+    transition: transform .18s ease;
+    animation: floaty 3.4s ease-in-out infinite;
+  }
+  .sticker:nth-child(odd){ animation-delay: -1.2s; }
+  .sticker:nth-child(3n){ animation-delay: -2.1s; }
+  .sticker:hover{ transform: scale(1.08) rotate(-3deg); }
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0) rotate(-2deg); }
+    50%{ transform: translateY(-10px) rotate(2deg); }
+  }
+
+  .sticker input{
+    display:block;
+    width:100%;
+    font-family:'Baloo 2', cursive;
+    text-align:center;
+    border:none;
+    background:transparent;
+    color:var(--ink);
+    padding:2px 0;
+    border-radius:4px;
+    cursor:text;
+  }
+  .sticker input:hover{ background:rgba(140,92,247,0.08); }
+  .sticker input:focus{
+    outline:2px dashed var(--grape);
+    outline-offset:1px;
+    background:rgba(140,92,247,0.12);
+  }
+  .emoji-input{ font-size:34px; padding:0; }
+  .label-input{
+    font-family:'Space Mono', monospace;
+    font-size:10px;
+    font-weight:700;
+    margin-top:2px;
+  }
+  .hint-input{
+    font-size:8px;
+    color:#999;
+    margin-top:2px;
+  }
+
+  /* ===== action buttons ===== */
+  .action-row{
+    margin-top:44px;
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    justify-content:center;
+    position:relative;
+    min-height:70px;
+    width:100%;
+    max-width:500px;
+  }
+  .btn{
+    font-family:'Baloo 2', cursive;
+    font-weight:700;
+    font-size:17px;
+    padding:14px 26px;
+    border-radius:50px;
+    border:3px solid var(--ink);
+    cursor:pointer;
+  }
+  #musicBtn{ background:var(--lime); box-shadow:4px 4px 0 var(--ink); }
+  #runBtn{
+    background:var(--bubblegum);
+    color:white;
+    position:relative;
+    box-shadow:4px 4px 0 var(--ink);
+    transition: transform .08s linear;
+  }
+  #confirmBtn{ background:var(--sun); box-shadow:4px 4px 0 var(--ink); }
+
+  .popup-msg{
+    position:fixed;
+    font-family:'Baloo 2', cursive;
+    font-weight:700;
+    font-size:14px;
+    background:white;
+    border:2px solid var(--ink);
+    border-radius:12px;
+    padding:8px 12px;
+    box-shadow:3px 3px 0 var(--ink);
+    pointer-events:none;
+    z-index:50;
+    animation: popfade 1.6s ease forwards;
+  }
+  @keyframes popfade{
+    0%{ opacity:0; transform: translateY(10px) scale(0.8); }
+    15%{ opacity:1; transform: translateY(0) scale(1); }
+    80%{ opacity:1; }
+    100%{ opacity:0; transform: translateY(-20px) scale(0.9); }
+  }
+
+  footer{
+    position:relative; z-index:3;
+    text-align:center;
+    padding: 10px 20px 40px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    color:rgba(36,30,51,0.7);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<main>
+  <span class="badge-top">⚠️ level ngeselin: maksimal</span>
+  <h1>GALLERY WALLPAPER BOCIL AWOKAWOK</h1>
+  <input class="name-input" id="nameInput" value="LUCUK" maxlength="20">
+  <p class="subtitle">Ini adalah foto imupku, ya gitulah pokonya, kamu bisa nulis apapun diatas ya</p>
+
+  <div class="photo-stage">
+    <!-- FOTO HIGHLIGHT (besar, di tengah) -->
+  <div class="photo-highlight">
+    <img src="asset/dhesy.jpg" alt="foto highlight">
+  </div>
+
+  <!-- FOTO-FOTO RANDOM DI SEKITARNYA -->
+  <div class="photo-scatter">
+    <div class="photo-slot s1"><img src="asset/bahlil.jpg" alt=""></div>
+    <div class="photo-slot s2"><img src="asset/ghuf.jpg" alt=""></div>
+    <div class="photo-slot s3"><img src="asset/gibr.jpg" alt=""></div>
+    <div class="photo-slot s4"><img src="asset/prab.jpg" alt=""></div>
+    <div class="photo-slot s5"><img src="asset/prabo.jpg" alt=""></div>
+  </div>
+  </div> 
+
+  <div class="sticker-wall" id="stickerWall">
+    <div class="sticker">
+      <input class="emoji-input" value="🕶️💼" maxlength="4">
+      <input class="label-input" value="SULTAN GAYA" maxlength="16">
+      <input class="label-input" value="INVESTASI" maxlength="16">
+      <input class="hint-input" value="ganti foto sendiri" maxlength="26">
+    </div>
+    <div class="sticker">
+      <input class="emoji-input" value="🎤👔👔" maxlength="4">
+      <input class="label-input" value="TRIO PALING" maxlength="16">
+      <input class="label-input" value="DIBICARAKAN" maxlength="16">
+      <input class="hint-input" value="ganti foto sendiri" maxlength="26">
+    </div>
+    <div class="sticker">
+      <input class="emoji-input" value="🐺🗡️" maxlength="4">
+      <input class="label-input" value="GAYA ALA" maxlength="16">
+      <input class="label-input" value="AUDITORE" maxlength="16">
+      <input class="hint-input" value="ganti foto sendiri" maxlength="26">
+    </div>
+    <div class="sticker">
+      <input class="emoji-input" value="🎂🔥" maxlength="4">
+      <input class="label-input" value="TIUP LILIN" maxlength="16">
+      <input class="label-input" value="SEBELUM TUA" maxlength="16">
+      <input class="hint-input" value="" maxlength="26">
+    </div>
+    <div class="sticker">
+      <input class="emoji-input" value="🐻🍯" maxlength="4">
+      <input class="label-input" value="SOUNDTRACK" maxlength="16">
+      <input class="label-input" value="NGESELIN" maxlength="16">
+      <input class="hint-input" value="" maxlength="26">
+    </div>
+    <div class="sticker">
+      <input class="emoji-input" value="🎈🧓" maxlength="4">
+      <input class="label-input" value="RESMI JADI" maxlength="16">
+      <input class="label-input" value="SESEPUH" maxlength="16">
+      <input class="hint-input" value="" maxlength="26">
+    </div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn" id="musicBtn" type="button">🔊 Puter Lagu Ngeselin</button>
+    <button class="btn" id="runBtn" type="button">Tutup halaman ini</button>
+    <button class="btn" id="confirmBtn" type="button">Aku udah tua 🎉</button>
+  </div>
+</main>
+
+<footer>klik nama/label/emoji buat edit langsung • lagu bikinan sendiri, bukan dari Masha & the Bear ya, biar aman 😉</footer>
+
+<script>
+  /* ===== confetti ===== */
+  var canvas = document.getElementById('confetti');
+  var ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var colors = ['#FF5FA2','#C6F24E','#4FC3F7','#8C5CF7','#FFD23F','#ffffff'];
+  function spawnParticle(){
+    return {
+      x: Math.random()*canvas.width,
+      y: Math.random()*-canvas.height,
+      r: 4 + Math.random()*5,
+      c: colors[Math.floor(Math.random()*colors.length)],
+      speed: 1 + Math.random()*2.2,
+      drift: Math.random()*1.4 - 0.7,
+      spin: Math.random()*6.28,
+      spinSpeed: (Math.random()-0.5)*0.15
+    };
+  }
+  var particles = [];
+  for(var i=0;i<90;i++){ particles.push(spawnParticle()); }
+
+  function tick(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(var j=0;j<particles.length;j++){
+      var p = particles[j];
+      p.y += p.speed; p.x += p.drift; p.spin += p.spinSpeed;
+      if(p.y > canvas.height + 10){ p.y = -10; p.x = Math.random()*canvas.width; }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.spin);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+      ctx.restore();
+    }
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  /* ===== popup helper ===== */
+  function showPopup(text, x, y, big){
+    var msg = document.createElement('div');
+    msg.className = 'popup-msg';
+    msg.textContent = text;
+    if(big){
+      msg.style.left = '50%'; msg.style.top = '50%';
+      msg.style.transform = 'translate(-50%,-50%)';
+      msg.style.fontSize = '20px';
+    } else {
+      msg.style.left = x + 'px';
+      msg.style.top = y + 'px';
+    }
+    document.body.appendChild(msg);
+    setTimeout(function(){ msg.remove(); }, 1600);
+  }
+
+  /* ===== runaway button ===== */
+  var runBtn = document.getElementById('runBtn');
+  var dodgeCount = 0;
+  var dodgeLines = ["Eits gabisa!", "Nggak semudah itu ferguso", "Coba lagi 😏", "Yah gagal lagi", "Sabar, ini ultahmu soalnya"];
+  function dodge(){
+    var maxX = innerWidth - runBtn.offsetWidth - 20;
+    var maxY = innerHeight - runBtn.offsetHeight - 20;
+    var x = Math.random()*Math.max(maxX,0);
+    var y = Math.random()*Math.max(maxY,0);
+    runBtn.style.position = 'fixed';
+    runBtn.style.left = x + 'px';
+    runBtn.style.top = y + 'px';
+    dodgeCount++;
+    runBtn.textContent = dodgeCount < 5 ? "Tutup halaman ini" : dodgeLines[dodgeCount % dodgeLines.length];
+  }
+  runBtn.addEventListener('mouseenter', dodge);
+  runBtn.addEventListener('touchstart', function(e){ e.preventDefault(); dodge(); }, {passive:false});
+  runBtn.addEventListener('click', function(e){ e.preventDefault(); dodge(); });
+
+  /* ===== confirm button ===== */
+  document.getElementById('confirmBtn').addEventListener('click', function(){
+    showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
+  });
+
+  /* ===== musik: autoplay muted, unmute di gerakan pertama ===== */
+  var bgMusic = new Audio('asset/mbg.mp3');
+  bgMusic.loop = true;
+  bgMusic.muted = true;
+  bgMusic.play(); // ini diizinkan browser karena muted
+
+  var unmuted = false;
+  function unmuteMusic(){
+    if(unmuted) return;
+    bgMusic.muted = false;
+    unmuted = true;
+  }
+  ['mousemove','click','touchstart','keydown','scroll','pointerdown'].forEach(function(evt){
+    document.addEventListener(evt, unmuteMusic, { once:true, passive:true });
+  });
+
+  /* ===== tombol musik: keliatan kayak stop, tapi sebenernya nggak stop ===== */
+  var musicBtn = document.getElementById('musicBtn');
+  musicBtn.textContent = "🔇 Stop Lagu Ngeselin";
+  musicBtn.addEventListener('click', function(){
+    showPopup("AWOWKWK, Ngapain dek!!! 🥳", 0, 0, true);
+  });
+</script>
+
+</body>
+</html>
