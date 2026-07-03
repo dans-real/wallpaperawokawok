@@ -425,20 +425,48 @@
     showPopup("Yaudah gapapa, emang udah tua🥳", 0, 0, true);
   });
 
-  /* ===== musik: autoplay muted, unmute di gerakan pertama ===== */
+  /* ===== musik: fallback aman untuk browser yang blok autoplay ===== */
   var bgMusic = new Audio('asset/mbg.mp3');
   bgMusic.loop = true;
+  bgMusic.preload = 'auto';
   bgMusic.muted = true;
-  bgMusic.play(); // ini diizinkan browser karena muted
 
+  var musicStarted = false;
   var unmuted = false;
-  function unmuteMusic(){
+
+  function tryStartMuted(){
+    if(musicStarted) return;
+    var startMuted = bgMusic.play();
+    if(startMuted && typeof startMuted.then === 'function'){
+      startMuted.then(function(){
+        musicStarted = true;
+      }).catch(function(){
+        // Browser bisa menolak autoplay, akan dicoba lagi saat ada interaksi user.
+      });
+    } else {
+      musicStarted = true;
+    }
+  }
+
+  function unlockAndUnmute(){
     if(unmuted) return;
     bgMusic.muted = false;
+    var startWithGesture = bgMusic.play();
+    if(startWithGesture && typeof startWithGesture.then === 'function'){
+      startWithGesture.then(function(){
+        musicStarted = true;
+      }).catch(function(){
+        // Tetap lanjut; browser bisa perlu gesture berikutnya.
+      });
+    } else {
+      musicStarted = true;
+    }
     unmuted = true;
   }
-  ['mousemove','click','touchstart','keydown','scroll','pointerdown'].forEach(function(evt){
-    document.addEventListener(evt, unmuteMusic, { once:true, passive:true });
+
+  tryStartMuted();
+  ['click','touchstart','keydown','pointerdown','mousemove','scroll'].forEach(function(evt){
+    document.addEventListener(evt, unlockAndUnmute, { once:true });
   });
 
   /* ===== tombol musik: keliatan kayak stop, tapi sebenernya nggak stop ===== */
